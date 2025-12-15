@@ -35,9 +35,13 @@ RUN apt-get update \
     tini \
  && rm -rf /var/lib/apt/lists/*
 
-# Locale (como el primero)
-RUN update-locale LANG=en_US.UTF-8 \
- && dpkg-reconfigure --frontend noninteractive locales
+# Locale (generate + set)
+RUN sed -i 's/^# *\(en_US.UTF-8 UTF-8\)/\1/' /etc/locale.gen \
+ && locale-gen \
+ && update-locale LANG=en_US.UTF-8
+
+ENV LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
 
 # Workdir (sin usuario container)
 RUN mkdir -p /home/container
